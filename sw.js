@@ -4,32 +4,30 @@ const CACHE_NAME = 'boui-player-v1';
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
-  '/album1.html',
-  '/album2.html',
-  '/album3.html',
-  '/album4.html',
-  '/album5.html',
-  '/album6.html',
-  '/album7.html',
-  '/album8.html',
-  '/album9.html',
-    '/album10.html',
-  '/album11.html',
-  '/album12.html',
-  '/album13.html',
-  '/album14.html',
-  '/album15.html',
-  '/album16.html',
-  '/album17.html',
-  '/album18.html',
-    '/album19.html',
-  '/album20.html',
-  '/album21.html',
-  '/album22.html',
-  '/album23.html',
-  '/album24.html',
-  '/album25.html',
-
+  '/album 2003.html',
+  '/album 2004.html',
+  '/album 2005.html',
+  '/album 2006.html',
+  '/album 2007.html',
+  '/album 2008.html',
+  '/album 2009.html',
+  '/album 2010.html',
+  '/album 2011.html',
+  '/album 2012.html',
+  '/album 2013.html',
+  '/album 2014.html',
+  '/album 2015.html',
+  '/album 2016.html',
+  '/album 2017.html',
+  '/album 2018.html',
+  '/album 2019.html',
+  '/album 2020.html',
+  '/album 2021.html',
+  '/album 2022.html',
+  '/album 2023.html',
+  '/album 2024.html',
+  '/album 2025.html',
+  
   
   // Add more HTML files or assets here
 ];
@@ -63,3 +61,8 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+// sw.js
+self.addEventListener('install', event => {
+  console.log('Service Worker installed');
+});
+
