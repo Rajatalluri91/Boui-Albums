@@ -3,7 +3,7 @@
 <head>
   <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#041f31" />
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+<link rel="icon" href="icons/icon-192.png" type="image/png" />
   
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -77,10 +77,11 @@
   <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Service Worker Registered'))
-      .catch(err => console.error('Service Worker registration failed:', err));
+      .then(() => console.log('✅ Service Worker Registered'))
+      .catch(err => console.error('❌ SW registration failed:', err));
   }
 </script>
+
 
   
 </body>
