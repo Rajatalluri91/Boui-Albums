@@ -1,70 +1,23 @@
-[
-  {
-    "title": "Album 2003",
-    "file": "album2003.html",
-    "cover": "cover2003.jpg"
-  },
-  {
-    "title": "Album 2004",
-    "file": "album2004.html",
-    "cover": "cover2004.jpg"
-  },
-  {
-    "title": "Album 2005",
-    "file": "album2005.html",
-    "cover": "cover2005.jpg"
-  },
-  {
-    "title": "Album 2006",
-    "file": "album2006.html",
-    "cover": "cover2006.jpg"
-  },
-  {
-    "title": "Album 2007",
-    "file": "album2007.html",
-    "cover": "cover2007.jpg"
-  },
-  {
-    "title": "Album 2008",
-    "file": "album2008.html",
-    "cover": "cover2008.jpg"
-  },
-  {
-    "title": "Album 2009",
-    "file": "album2009.html",
-    "cover": "cover2009.jpg"
-  },
-  {
-    "title": "Album 2010",
-    "file": "album2010.html",
-    "cover": "cover2010.jpg"
-  },
-  {
-    "title": "Album 2011",
-    "file": "album2011.html",
-    "cover": "cover2011.jpg"
-  },
-  {
-    "title": "Album 2012",
-    "file": "album2012.html",
-    "cover": "cover2012.jpg"
-  },{
-    "title": "Album 2013",
-    "file": "album2013.html",
-    "cover": "cover2013.jpg"
-  },
-  {
-    "title": "Album 2014",
-    "file": "album2014.html",
-    "cover": "cover2014.jpg"
-  },
-  {
-    "title": "Album 2015",
-    "file": "album2015.html",
-    "cover": "cover2015.jpg"
-  },
-  {
-    "title": "Album 2016",
+{
+  "name": "BOUI Albums",
+  "short_name": "BOUI",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#041f31",
+  "theme_color": "#041f31",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
     "file": "album2016.html",
     "cover": "cover2016.jpg"
   },
