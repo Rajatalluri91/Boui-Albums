@@ -66,3 +66,20 @@ self.addEventListener('install', event => {
   console.log('Service Worker installed');
 });
 
+self.addEventListener("install", (e) => {
+  console.log("[Service Worker] Install");
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (e) => {
+  console.log("[Service Worker] Activate");
+});
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
+});
+
