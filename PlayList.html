@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BOUI Music Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@421&family=Mallanna&family=Mandali&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #111, #333);
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .search-bar {
+      position: fixed;
+  top: 0;
+  left: 0;
+  width:98%;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent dark */
+  backdrop-filter: blur(8px);           /* blur mask */
+  -webkit-backdrop-filter: blur(8px);   /* for Safari */
+  padding: 12px 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 90%;
+      max-width: 400px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: #b4b4b4;
+      color: black;
+      box-shadow: 0 0 5px rgba(0,255,255,0);
+    }
+
+    .section {
+      margin-bottom: 20px;
+      
+    }
+    .playlists {
+        padding-top:50px; 
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .section-header h2 {
+      font-size: 1.2em;
+      margin: 0;
+      color: #ccc;
+    }
+
+    .view-toggle {
+      font-size: 14px;
+      color: #00ffcc;
+      cursor: pointer;
+      
+    }
+
+    .album-container {
+      display: flex;
+      gap: 25px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 10px;
+    }
+
+    .grid-view {
+      flex-wrap: wrap;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .album {
+      flex: 0 0 auto;
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      width: 150px;
+      height: 200px;
+      text-align: center;
+      animation: bounceIn 0.8s ease-out forwards;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .album::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+      );
+      transform: rotate(25deg);
+      animation: shimmer 3s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) rotate(25deg);
+      }
+      100% {
+        transform: translateX(100%) rotate(25deg);
+      }
+    }
+
+    .album:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 255, 204, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+
+    .image-wrapper.loading::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #2e2e2e 25%, #444 50%, #2e2e2e 75%);
+      background-size: 200% 100%;
+      animation: shimmerLoad 1.2s infinite;
+      border-radius: 10px;
+    }
+
+    @keyframes shimmerLoad {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      
+    }
+
+    .reflection {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.15),
+        transparent
+      );
+      transform: scaleY(-1);
+      opacity: 0.25;
+      pointer-events: none;
+      border-radius: 10px;
+    }
+
+    .album h3 {
+      margin-top: 5px;
+      color: #00ffcc;
+      font-size: 0.8em;
+      margin-bottom:0;
+      font-family: 'Anek Telugu', sans-serif;
+    }
+
+    .play-button {
+      background: #00ffcc;
+      color: #111;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      border: none;
+      margin-top: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .play-button:hover {
+      background: #00ccb3;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+      80% {
+        transform: scale(0.95);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+    
+.album.artist {
+  width: 150px;
+  height: 150px;
+}
+.album.artist .image-wrapper {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.album.artist .image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.album.artist h3 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.album.artist .reflection {
+  border-radius: 50%;
+}
+<style>
+  /* ... మీ ఇతర styles అలాగే ఉంచండి ... */
+
+  /* ✅ Albums కోసం image-wrapper */
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #333;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  /* ✅ Artists-specific styles */
+  .album.artist {
+    width: 150px;
+    height: 190px;
+  }
+
+  .album.artist .image-wrapper {
+    width: 120px !important;
+    height: 120px !important;
+    margin: 0 auto;
+    border-radius: 50% !important;
+    overflow: hidden;
+    background: #333;
+  }
+
+  .album.artist .image-wrapper img {
+    border-radius: 50% !important;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .album.artist .reflection {
+    border-radius: 50%;
+  }
+
+  .album.artist h3 {
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom:0;
+    
+  }
+  
+  .album, .album.artist {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.album:active,
+.album.artist:active {
+  transform: scale(0.95);
+}
+
+
+
+</style>
+
+
+  </style>
+</head>
+<body>
+  
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search Albums or Artists..." />
+  </div>
+  
+  <!-- Playlists Section -->
+  <div class="playlists">
+  <div class="section">
+    <div class="section-header">
+      <h2>Playlists</h2>
+      <div class="view-toggle" onclick="toggleView('playlists')">View All</div>
+    </div>
+    <div class="album-container" id="playlists">
+        
+    
+<div class="album" data-title="ALL SONGS" data-type="album" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Songs-Offline/')">
+  <div class="image-wrapper">
+    <img src="https://i.pinimg.com/736x/49/9f/18/499f18cfad6f432a664ffec99ed01790.jpg" />
+    <div class="reflection"></div>
+  </div>
+  <h3>ALL SONGS</h3><br>
+</div>
+
+
+      <div class="album" data-title="ALL TRACKS" data-type="album" 
+      onclick="openAlbum('https://rajatalluri91.github.io/BOUI_Tracks/')">
+          
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/0f/f6/02/0ff602133f02f88e35abe426fa010d3c.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>ALL TRACKS</h3><br>
+        
+      </div>
+      </div>
+      </div>
+</div>
+  <!-- Albums Section -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Albums</h2>
+      <div class="view-toggle" onclick="toggleView('albums')">View All</div>
+    </div>
+    <div class="album-container" id="albums">
+        
+    
+<div class="album" data-title="Katha Kadhidhi Nijame Idhi" data-type="album" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2025.html')">
+  <div class="image-wrapper">
+    <img src="https://i.pinimg.com/736x/10/fe/2e/10fe2eeefcf295d1e5c595f965011740.jpg" />
+    <div class="reflection"></div>
+  </div>
+  <h3>Katha Kadhidhi Nijame Idhi</h3>
+</div>
+
+<div class="album" data-title="Devuni Kala Rahasyam" data-type="album" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2024.html')">
+  <div class="image-wrapper">
+    <img src="https://i.pinimg.com/736x/a4/63/f7/a463f73d66b98cd5e28b48cecd0f7e6f.jpg" />
+    <div class="reflection"></div>
+  </div>
+  <h3>Devuni Kala Rahasyam</h3><br>
+</div>
+
+      <div class="album" data-title="Deva Thudhiswasa.." data-type="album" 
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2023.html')">
+          
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/03/eb/33/03eb336f2320320d3712efaf54875e7a.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Deva Thudhiswasa..</h3><br>
+        
+      </div>
+      
+      <div class="album" data-title="Unnavadu Oopiri Posadu" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2022.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/02/1d/6b/021d6b50e8d4652df7a7d5a5eb63be2d.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Unnavadu Oopiri Posadu</h3>
+       
+      </div>
+      
+      <div class="album" data-title="Sangeetha Srustikarta Evaru" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2021.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/a6/b7/a5/a6b7a5b727d272efc3d357fa3cd08d6c.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Sangeetha Srustikarta Evaru</h3>
+        
+      </div>
+      
+      <div class="album" data-title="Nenu Devunike Puttaanu" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2020.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/13/ee/36/13ee367ded9b70ac15110f2b2a946726.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Nenu Devunike Puttaanu</h3>
+  
+      </div>      
+      
+      
+      <div class="album" data-title="Bhulokamandhu Yeluchunna.." data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2019.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/3a/07/15/3a07154eddefe6912dd08cf1e9971ac3.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Bhulokamandhu Yeluchunna..</h3>
+        
+      </div>
+      
+      <div class="album" data-title="Devuni Theerpu" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2018.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/b4/a3/7e/b4a37e1e8e80e19706a0158c92f0a440.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Devuni Theerpu</h3><br>
+        
+      </div>
+      
+      <div class="album" data-title="Devuni Parichayam" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2017.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/59/85/dd/5985dd51a59755fb0baab4a078170235.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Devuni Parichayam</h3><br>
+        
+      </div>
+      
+      <div class="album" data-title="God Created" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2016.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/a4/b0/ac/a4b0ace8ff849e81483a097abef5e80d.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>God Created</h3><br>
+        
+      </div>
+	  
+	  <div class="album" data-title="Devunigurichi Cheppina Devudu" data-type="album" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2015.html')">
+  <div class="image-wrapper">
+    <img src="https://i1.sndcdn.com/artworks-000143005415-b4n4zr-t500x500.jpg" />
+    <div class="reflection"></div>
+  </div>
+  <h3>Devunigurichi Cheppina Devudu</h3>
+</div>
+
+
+      <div class="album" data-title="Prapancha Moksha Pradatha Kreesthe" data-type="album" 
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2014.html')">
+          
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/6e/d8/d4/6ed8d498ea844c0c02c803c8ef836436.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Prapancha Moksha Pradatha Kreesthe</h3>
+        
+      </div>
+      
+      <div class="album" data-title="Neekoka Devudu Naakoka Devuda" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2013.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/35/3a/f8/353af8b433ca676135d297aee54f02a5.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Neekoka Devudu Naakoka Devuda</h3>
+       
+      </div>
+      
+      <div class="album" data-title="Devuni Gnapakalalo Neevunnava" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2012.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/d3/71/e4/d371e437b7c37a704d42fb493360e682.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Devuni Gnapakalalo Neevunnava</h3>
+        
+      </div>
+      
+      <div class="album" data-title="Devuni Manasu" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2011.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/07/00/ae/0700aea70f686a906e05796feab5c1ce.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Devuni Manasu</h3><br>
+  
+      </div>      
+      
+      
+      <div class="album" data-title="Jayashali Kadavari Yuddham" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2010.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/02/e7/1f/02e71f9954a4463b34a97551eb7c8435.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Jayashali Kadavari Yuddham</h3>
+        
+      </div>
+      
+      <div class="album" data-title="Atmahuthula Atma Rakshakula" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2009.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/1e/8c/dc/1e8cdc5530c19fb8caf08f0be71749ec.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Atmahuthula Atma Rakshakula</h3>
+        
+      </div>
+      
+      <div class="album" data-title="Prapanchaniki Yesu Okkade" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2008.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/50/ad/cf/50adcf4a8a3bb74bb1fb5bc33f4c0ca6.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Prapanchaniki Yesu Okkade</h3>
+        
+      </div>
+      
+      <div class="album" data-title="Chivari Ghadiya" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2007.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/19/81/db/1981db1d101ec4115cbc77445d972b44.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Chivari Ghadiya</h3><br>
+		
+       </div>
+	        <div class="album" data-title="Kreesthu Prabhanjanam" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2006.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/8d/84/98/8d849852f4bb546f1685faf5a435ff32.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Kreesthu Prabhanjanam</h3><br>
+       </div>
+	  
+	  <div class="album" data-title="Shakapurushudu" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2005.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/a7/ea/07/a7ea07d2ab74a459c4d2a2d70283e073.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Shakapurushudu</h3><br>
+        </div>
+		
+		<div class="album" data-title="Sudarashabda Lekhanamala 2" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2004.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/bd/a3/8f/bda38f24c3a9d9eaf4b514a27bfe2f1b.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Sudarashabda Lekhanamala 2</h3>
+        </div>
+		<div class="album" data-title="Sudarashabda Lekhanamala 1
+		" data-type="album"
+      onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/album 2003.html')">
+        <div class="image-wrapper">
+          <img src="https://i.pinimg.com/736x/27/3b/a7/273ba7ad2f24ff420394dc87a2cea6c0.jpg" />
+          <div class="reflection"></div>
+        </div>
+        <h3>Sudarashabda Lekhanamala 1</h3>
+        </div>
+		
+	  
+	  
+	  
+	  
+    </div>
+  </div>
+  
+  
+
+  <!-- Artists Section -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Artists</h2>
+      <div class="view-toggle" onclick="toggleView('artists')">View All</div>
+    </div>
+    <div class="album-container artist" id="artists">
+      <div class="album artist" data-title="King Johnson Victor" data-type="artist" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/KJVplaylist.html')">
+        <div class="image-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEZxBy4bGbuYGioi960PlAzD8mqqGzSn6pkYptKKlz9I0gc1snCBL-hNY&s=10" />
+          <div class="reflection"></div>
+        </div>
+       
+        <h3>King Johnson Victor</h3><br>
+        
+      </div>
+
+
+      <div class="album artist" data-title="Lazarus Prasanna Babu" data-type="artist" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/LPBplaylist.html')">
+        <div class="image-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHMb7H5gp2_AG1cHI_6GrB9AK1kx7C_1KTj_e9Mg9vW9KCqJ_oZFZzDn8&s=10" />
+          <div class="reflection"></div>
+        </div>        
+        <h3>Lazarus Prasanna Babu</h3><br>
+        
+      </div>
+      
+      <div class="album artist" data-title="SP Balasubramaniam" data-type="artist" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/SPBplaylist.html')">
+        <div class="image-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuJQ8zqiuQ5RA0pBhnPXJ7yAKtzvq0dU9rvIWHQ69raHsYi4cF2Tff9qha&s=10" />
+          <div class="reflection"></div>
+        </div>        
+        <h3>SP Balasubramaniam</h3><br>
+        
+      </div>
+      
+      <div class="album artist" data-title="Mano" data-type="artist" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/Mano.html')">
+        <div class="image-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZbBKJz5--9JNTzgnR1P-1iEw_Fdp6Y9tiKKHJ4_02HgdLwtc7GelurRvb&s=10" />
+          <div class="reflection"></div>
+        </div>        
+        <h3>Mano</h3><br>
+        
+      </div>
+      <div class="album artist" data-title="Rajesh Krishnan" data-type="artist" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/Rajesh.html')">
+        <div class="image-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaPzq9NvFnKzYBFWP8buGxWcHsj5q_EYh7AFsNGP8cuT1umX-5vXqvpV8&s=10" />
+          <div class="reflection"></div>
+        </div>        
+        <h3>Rajesh Krishnan</h3><br>
+        
+      </div>
+      <div class="album artist" data-title="Ramu" data-type="artist" onclick="openAlbum('https://rajatalluri91.github.io/Boui-Albums/Ramu.html')">
+        <div class="image-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLfuHdSXh5Fx6ZfoWxHL0n7m7DjyewNKGW0mTWxbZE5m70ckiwYqSOl7c&s=10" />
+          <div class="reflection"></div>
+        </div>        
+        <h3>Ramu</h3><br>
+        
+      </div>
+    </div>
+  </div>
+
+
+  
+  <script>
+    // Load Images
+    document.querySelectorAll(".image-wrapper").forEach((wrapper) => {
+      wrapper.classList.add("loading");
+      const img = wrapper.querySelector("img");
+      img.onload = () => {
+        wrapper.classList.remove("loading");
+        img.style.opacity = "1";
+      };
+    });
+
+    // View Toggle
+    function toggleView(sectionId) {
+      const container = document.getElementById(sectionId);
+      const toggleBtn = container.previousElementSibling.querySelector(".view-toggle");
+      const isGrid = container.classList.toggle("grid-view");
+      toggleBtn.textContent = isGrid ? "View Less" : "View All";
+    }
+
+   // Search Filter
+document.getElementById("searchInput").addEventListener("input", function () {
+  const query = this.value.toLowerCase();
+  document.querySelectorAll(".album").forEach((album) => {
+    const title = album.dataset.title.toLowerCase();
+    if (title.includes(query)) {
+      album.classList.remove("hidden");
+    } else {
+      album.classList.add("hidden");
+    }
+  });
+});
+
+
+  function openAlbum(url) {
+  const el = event.currentTarget;
+  el.classList.add('clicked');
+  setTimeout(() => {
+    el.classList.remove('clicked');
+    window.open(url, "_blank");
+  }, 150); // Wait for animation to finish
+}
+
+  </script>
+</body>
+</html>
