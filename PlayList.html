@@ -732,8 +732,8 @@ document.getElementById("searchInput").addEventListener("input", function () {
   el.classList.add('clicked');
   setTimeout(() => {
     el.classList.remove('clicked');
-    window.open(url, "_blank");
-  }, 150); // Wait for animation to finish
+    window.location.href = url; // ✅ same tab లో open అవుతుంది → back button perfectly పనిచేస్తుంది
+  }, 150);
 }
 
   </script>
