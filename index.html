@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-  <link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#041f31" />
-<link rel="icon" href="icons/icon-192.png" type="image/png" />
-<meta charset="utf-8"><title>BOUI Albums</title>
   <meta charset="UTF-8" />
+  <title>BOUI Albums</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#041f31" />
+
+  <!-- Manifest & App Icons -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" type="image/png" />
+
   <style>
     * {
       margin: 0;
@@ -15,11 +17,11 @@
       box-sizing: border-box;
     }
 
-    body, html {
+    html, body {
       width: 100%;
       height: 100%;
-      overflow: hidden;
       font-family: sans-serif;
+      overflow: hidden;
     }
 
     .video-container {
@@ -68,23 +70,22 @@
 <body>
   <div class="video-container">
     <video autoplay muted loop playsinline preload="auto">
-      <source src="https://github.com/Rajatalluri91/Boui-Songs-Cover-Page/raw/refs/heads/main/Cover.mp4" type="video/mp4">
+      <source src="https://github.com/Rajatalluri91/Boui-Songs-Cover-Page/raw/refs/heads/main/Cover.mp4" type="video/mp4" />
     </video>
 
-    <!-- ✅ Button now links to Music Library (New Player Page) -->
+    <!-- ENTER button -->
     <button class="enter-button" onclick="location.href='PlayList.html'">ENTER</button>
   </div>
+
+  <!-- Service Worker Register -->
   <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then((reg) => console.log("Service Worker Registered", reg))
-        .catch((err) => console.error("SW registration failed", err));
-    });
-  }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('✅ Service Worker Registered', reg))
+          .catch(err => console.error('❌ SW Registration Failed:', err));
+      });
+    }
   </script>
-
-
-  
 </body>
 </html>
